@@ -2,7 +2,7 @@
 4051 Driver
 
 Drives a 4051 Shift Register. 
-© Keegan Crankshaw 2018
+Keegan Crankshaw 2018
 
 TODO: Add support for PWM pins
 
@@ -67,7 +67,15 @@ class MuxDemux:
     POST - Power on self test
     Simply iterates over each pin,
     """
-        pass
+        for i in itertools.product([GPIO.LOW,GPIO.HIGH],repeat=3):
+            # set the switches
+            GPIO.output(self.S0Pin, i[0])
+			GPIO.output(self.S1Pin, i[1])
+			GPIO.output(self.S2Pin, i[2])
+            
+            # sleep to ensure signal propogation
+            time.sleep(0.5)
+        
             
             
 if "__name__" == "__main__":
