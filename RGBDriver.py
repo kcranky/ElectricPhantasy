@@ -8,6 +8,7 @@ File written to drive an RGB LED
 
 import RPi.GPIO as GPIO
 import time
+import RGBColours
 
 class RGB:
 
@@ -42,6 +43,11 @@ class RGB:
         self.BLUE.ChangeDutyCycle(self.colours[2])
 
     def POST(self):
+        for c in RGBColours.Colours:
+            print(c)
+            self.changeColour(RGBColours.Colours[c])
+            time.sleep(0.2)
+        return
         self.changeColour([100,0,0])
         time.sleep(0.5)
         self.changeColour([0,100,0])
