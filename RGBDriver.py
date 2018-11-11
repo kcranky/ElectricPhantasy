@@ -27,7 +27,7 @@ class RGB:
         GPIO.setup(self.GPin, GPIO.OUT)
         GPIO.setup(self.BPin, GPIO.OUT)
 
-        self.freq = 1000
+        self.freq = 100000000
 
         self.RED = GPIO.PWM(self.RPin, self.freq)
         self.BLUE = GPIO.PWM(self.BPin, self.freq)
