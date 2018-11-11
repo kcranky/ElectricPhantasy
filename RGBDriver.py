@@ -9,6 +9,7 @@ File written to drive an RGB LED
 import RPi.GPIO as GPIO
 import time
 import RGBColours
+import colorsys
 
 class RGB:
 
@@ -26,7 +27,7 @@ class RGB:
         GPIO.setup(self.GPin, GPIO.OUT)
         GPIO.setup(self.BPin, GPIO.OUT)
 
-        self.freq = 100000
+        self.freq = 1000
 
         self.RED = GPIO.PWM(self.RPin, self.freq)
         self.BLUE = GPIO.PWM(self.BPin, self.freq)
@@ -42,24 +43,22 @@ class RGB:
         self.GREEN.ChangeDutyCycle(self.colours[1])
         self.BLUE.ChangeDutyCycle(self.colours[2])
 
+
     def POST(self):
         for c in RGBColours.Colours:
-            print(c)
             self.changeColour(RGBColours.Colours[c])
             time.sleep(0.2)
-        return
-        self.changeColour([100,0,0])
-        time.sleep(0.5)
-        self.changeColour([0,100,0])
-        time.sleep(0.5)
-        self.changeColour([0,0,100])
-        time.sleep(0.5)
-        for r in range(0,100,10):
-            for g in range(0,100,10):
-                for b in range(0,100,10):
-                    self.changeColour([r,g,b])
-                    time.sleep(0.05)
 
+
+    def POST2(self):
+        s = 1.0
+        v = 1.0
+        for i in range(0,101):
+            h = float(i)/100
+            conv = colorsys.hsv_to_rgb(h, s, v)
+            scaled = [int(v *100) for v in conv]
+            self.changeColour(scaled)
+            time.sleep(0.05)
 
 
 if __name__ == "__main__":
@@ -67,9 +66,8 @@ if __name__ == "__main__":
         GPIO.setmode(GPIO.BOARD)
         led = RGB(37,33,31)
         print("Starting RGB POST")
-        #while True:
-        led.POST()
-        GPIO.cleanup()
+        while True:
+            led.POST2()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("\nExiting")
