@@ -14,19 +14,8 @@ using namespace std;
 #define S2Pin 29
 
 int SWITCHES[8][3] = {{0,0,0},{0,0,1},{0,1,0},{0,1,1},{1,0,0},{1,0,1},{1,1,0},{1,1,1}};
-void hsvtest(void){
-    hsv a = {1.0,1.0,1.0};
 
-    for(int i =0; i< 361;i++){
-        a.h=i;
-        rgb b = hsv2rgb(a);
-        //cout<<b.r<<","<<b.g<<","<<b.b<<endl;
-        softPwmWrite(R, b.r*100);
-        softPwmWrite(G, b.g*100);
-        softPwmWrite(B, b.b*100);
-        delay(15);
-    }
-}
+int COLOURS[8][3] = {{0,0,0},{0,0,100},{0,100,0},{0,100,100},{100,0,0},{100,0,100},{100,100,0},{100,100,100}};
 
 void turnOff(void){
     softPwmWrite(R,0);
@@ -34,8 +23,36 @@ void turnOff(void){
     softPwmWrite(B,0);
 }
 
+void writeColours(int[3]  RGB){
+    softPwmWrite(R,RGB[0]);
+    softPwmWrite(G,RGB[2]);
+    softPwmWrite(B,RGB[1]);
+}
+
+void testhsv(void){
+    hsv a = {1.0,1.0,1.0};
+
+    for(int i =0; i< 361;i++){
+        a.h=i;
+        rgb b = hsv2rgb(a);
+        //cout<<b.r<<","<<b.g<<","<<b.b<<endl;
+        writeColours([b.r*100, b.g*100,b.b*100])
+        delay(15);
+    }
+}
+
 void test4051(void){
     for (int i=0; i<8; i++){
+        digitalWrite(S0Pin, SWITCHES[i][0]);
+        digitalWrite(S1Pin, SWITCHES[i][1]);
+        digitalWrite(S2Pin, SWITCHES[i][2]);
+        delay(1);
+    }
+}
+
+void testDifferent(void){
+    for (int i=0; i<8; i++){
+        writeColours(COLOURS[i]);
         digitalWrite(S0Pin, SWITCHES[i][0]);
         digitalWrite(S1Pin, SWITCHES[i][1]);
         digitalWrite(S2Pin, SWITCHES[i][2]);
