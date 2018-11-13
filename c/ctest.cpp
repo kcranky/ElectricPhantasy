@@ -13,32 +13,18 @@ using namespace std;
 #define S1Pin 28
 #define S2Pin 29
 
-void cycleColors(void){
-    for(int r=1; r<256; r++){
-        for(int g=1; g<256; g++){
-            for(int b=1; b<256; b++){
-                softPwmWrite(B,b);
-                softPwmWrite(R,r);
-                softPwmWrite(G,g);
-                delay(50);
-            }
-        }
-    }
-    delay(1000);
-}
-
-
+int SWITCHES[8][3] = {{0,0,0},{0,0,1},{0,1,0},{0,1,1},{1,0,0},{1,0,1},{1,1,0},{1,1,1}};
 void hsvtest(void){
     hsv a = {1.0,1.0,1.0};
 
     for(int i =0; i< 361;i++){
         a.h=i;
         rgb b = hsv2rgb(a);
-        cout<<b.r<<","<<b.g<<","<<b.b<<endl;
+        //cout<<b.r<<","<<b.g<<","<<b.b<<endl;
         softPwmWrite(R, b.r*100);
         softPwmWrite(G, b.g*100);
         softPwmWrite(B, b.b*100);
-        delay(6);
+        delay(15);
     }
 }
 
@@ -46,6 +32,15 @@ void turnOff(void){
     softPwmWrite(R,0);
     softPwmWrite(G,0);
     softPwmWrite(B,0);
+}
+
+void test4051(void){
+    for (int i=0; i<8; i++){
+        digitalWrite(S0Pin, SWITCHES[i][0]);
+        digitalWrite(S1Pin, SWITCHES[i][1]);
+        digitalWrite(S2Pin, SWITCHES[i][2]);
+        delay(1);
+    }
 }
 
 void testColors(void){
@@ -88,16 +83,17 @@ pinMode(R,OUTPUT);
 pinMode(B,OUTPUT);
 pinMode(G,OUTPUT);
 
-//pinMode(S0Pin,OUTPUT);
-//pinMode(S1Pin,OUTPUT);
-//pinMode(S2Pin,OUTPUT);
+pinMode(S0Pin,OUTPUT);
+pinMode(S1Pin,OUTPUT);
+pinMode(S2Pin,OUTPUT);
 
-softPwmCreate(R,0,256);
-softPwmCreate(G,0,256);
-softPwmCreate(B,0,256);
+softPwmCreate(R,0,100);
+softPwmCreate(G,0,100);
+softPwmCreate(B,0,100);
 
     //testColors();
-    hsvtest();
-
+while(1){
+    test4051();
+}
 return 0;
 }
