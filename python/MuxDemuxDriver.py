@@ -9,13 +9,16 @@ TODO: Add support for PWM pins
 """
 import RPi.GPIO as GPIO
 import itertools
-import time
 
 POSITIONS = [[0,0,0],[0,0,1],[0,1,0],[0,1,1],[1,0,0],[1,0,1],[1,1,0],[1,1,1]]
 
-CHANGETIME = 0.002
+CHANGETIME = 1000000
 
 class MuxDemux:
+
+    def delay(self):
+        for i in  range(CHANGETIME):
+            pass
 
     def __init__(self, S0Pin, S1Pin, S2Pin, values=[], InOut=None, InOutPin=None):
         """
@@ -53,7 +56,7 @@ class MuxDemux:
             # set the switches
             self.moveTo(i)
             # sleep to ensure signal propogation
-            time.sleep(sleeptime)
+            self.delay()
 
             # read or write data if necessary
             if (self.mode == "Out"):
@@ -66,13 +69,13 @@ class MuxDemux:
         # value if true if condition else value when false
         self.curPos = 7 if self.curPos == 0 else self.curPos-1
         self.moveTo(POSITIONS[self.curPos])
-        time.sleep(CHANGETIME)
+        self.delay()
 
     def next(self):
         """ Simply moves the mux to the next output pin """
         self.curPos = 0 if self.curPos == 7 else self.curPos+1
         self.moveTo(POSITIONS[self.curPos])
-        time.sleep(CHANGETIME)
+        self.delay()
 
 
     def moveTo(self, position):
@@ -92,7 +95,7 @@ class MuxDemux:
             # set the switches
             self.moveTo(i)
             # delay so effects are observable
-            time.sleep(0.5)
+            self.delay()
 
 
 

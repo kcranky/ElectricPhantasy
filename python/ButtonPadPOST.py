@@ -1,7 +1,9 @@
+
 import RPi.GPIO as GPIO
 import RGBDriver
 import MuxDemuxDriver
 import time
+import itertools
 
 GPIO.setmode(GPIO.BOARD)
 
@@ -27,15 +29,31 @@ def POSTAllSame():
 
 def POSTDifferent():
     count = 0
+    m.next()
     while True:
         m.next()
         LED.changeColour(colours[count])
         count = 0 if count == 7 else count+1
 
+
+def POSTSelf():
+    count = 7
+    while True:
+         for i in itertools.product([GPIO.LOW,GPIO.HIGH],repeat=3):
+            LED.RED.ChangeDutyCycle(colours[count][0])
+            LED.GREEN.ChangeDutyCycle(colours[count][1])
+            LED.BLUE.ChangeDutyCycle(colours[count][2])
+            GPIO.output(m.S0, i[0])
+            GPIO.output(m.S1, i[1])
+            GPIO.output(m.S2, i[2])
+            count = 0 if count == 7 else count +1
+            for i in range(7500):
+                pass
+
+
 if __name__ == "__main__":
     try:
-        while True:
-            POSTDifferent()
+        POSTSelf()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("\nExiting")
