@@ -10,10 +10,7 @@ Keegan Crankshaw 2018
 
 import RPi.GPIO as GPIO
 import time
-import RGBColours
-import colorsys
-
-PWMFREQ = 1000000000
+import itertools
 
 class RGB:
 
@@ -25,54 +22,33 @@ class RGB:
         self.RPin = RPin
         self.GPin = GPin
         self.BPin = BPin
-        self.colours = [[100]*3];
+        self.colours = [1,1,1];
 
         GPIO.setup(self.RPin, GPIO.OUT)
         GPIO.setup(self.GPin, GPIO.OUT)
         GPIO.setup(self.BPin, GPIO.OUT)
 
-        self.freq = PWMFREQ
-
-        self.RED = GPIO.PWM(self.RPin, self.freq)
-        self.BLUE = GPIO.PWM(self.BPin, self.freq)
-        self.GREEN = GPIO.PWM(self.GPin, self.freq)
-
-        self.RED.start(0)
-        self.GREEN.start(0)
-        self.BLUE.start(0)
 
     def changeColour(self, RGBValues):
         self.colours = RGBValues
-        self.RED.ChangeDutyCycle(100-self.colours[0])
-        self.GREEN.ChangeDutyCycle(100-self.colours[1])
-        self.BLUE.ChangeDutyCycle(100-self.colours[2])
+        GPIO.output(self.RPin, self.colours[0])
+        GPIO.output(self.GPin, self.colours[1])
+        GPIO.output(self.BPin, self.colours[2])
 
 
     def POST(self):
-        for c in RGBColours.Colours:
-            self.changeColour(RGBColours.Colours[c])
-            time.sleep(0.2)
-
-
-    def POST2(self):
-        s = 1.0
-        v = 1.0
-        for i in range(0,101):
-            h = i/100
-            conv = colorsys.hsv_to_rgb(h, s, v)
-            scaled = [int(v *100.0) for v in conv]
-            inverted = [100-i for i in scaled]
-            self.changeColour(scaled)
-            time.sleep(0.01)
-
+        for i in itertools.product([GPIO.LOW, GPIO.HIGH],repeat=3):
+            print(i)
+            self.changeColour(i)
+            time.sleep(0.5)
 
 if __name__ == "__main__":
     try:
         GPIO.setmode(GPIO.BOARD)
-        led = RGB(37,33,31)
+        led = RGB(37,35,33)
         print("Starting RGB POST")
         while True:
-            led.POST2()
+            led.POST()
     except KeyboardInterrupt:
         GPIO.cleanup()
         print("\nExiting")
